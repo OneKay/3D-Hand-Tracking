@@ -87,28 +87,27 @@ Leap Motion与Unity集成：在<a href="https://developer.leapmotion.com/get-sta
 为了实现手指选择功能就需要实现碰撞检测，在Unity中我们可以使用OnTriggerEnter函数来检测碰撞，这个函数输入一个Collider对象，因此要想实现碰撞检测，我们需要给之前放入的Cube设置碰撞器，具体内容参考<a href="http://bbs.9ria.com/thread-223673-1-1.html">物理引擎：碰撞器</a>，这里我们设置的是Mesh Collider。<br>
 实现了碰撞检测后，我们就可以写一个与立方体交互的脚本    </p>
 
-<pre><code>using UnityEngine;
-using System.Collections;
+<div class="highlight highlight-source-cs"><pre>    <span class="pl-k">using</span> UnityEngine<span class="pl-k">;</span>
+    <span class="pl-k">using</span> System.Collections<span class="pl-k">;</span>
 
-public class CubeInteraction : MonoBehaviour {
-    public Color c;
-    public static Color selectedColor;
-    public bool selectable = false;
-    void OnTriggerEnter(Collider c)
-    {
-        if (c.gameObject.transform.parent.name.Equals("index"))
+    <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">CubeInteraction</span> : <span class="pl-k">MonoBehaviour</span> {
+        <span class="pl-k">public</span> Color c;
+        <span class="pl-k">public</span> <span class="pl-k">static</span> Color selectedColor;
+        <span class="pl-k">public</span> <span class="pl-k">bool</span> selectable = <span class="pl-c1">false</span>;
+        <span class="pl-k">void</span> <span class="pl-en">OnTriggerEnter</span>(<span class="pl-k">Collider</span> <span class="pl-smi">c</span>)
         {
-            if (this.selectable)
+            <span class="pl-k">if</span> (c.gameObject.transform.parent.name.Equals(<span class="pl-s"><span class="pl-pds">"</span>index<span class="pl-pds">"</span></span>))
             {
-                CubeInteraction.selectedColor = this.c;
-                this.transform.Rotate(Vector3.up, 33);
-                return;
+                <span class="pl-k">if</span> (<span class="pl-c1">this</span>.selectable)
+                {
+                    CubeInteraction.selectedColor = <span class="pl-c1">this</span>.c;
+                    <span class="pl-c1">this</span>.transform.Rotate(Vector3.up, <span class="pl-c1">33</span>);
+                    <span class="pl-k">return</span>;
+                }
+                transform.gameObject.GetComponent&lt;Renderer&gt;().material.color = CubeInteraction.selectedColor;
             }
-            transform.gameObject.GetComponent&lt;Renderer&gt;().material.color = CubeInteraction.selectedColor;
         }
-    }
-}    
-</code></pre>
+    }   </pre></div>
 
 <p>逻辑的核心在OnTriggerEnter(Collider c) 函数内，我们检查与可选择物体的碰撞对象是不是食指，如果是，我们设置为该颜色。我们设计这么一种交互，当食指与可选择颜色的立方体产生碰撞的后，让它旋转33度，这样我们能更直观的看出交互效果。 然后获得立方体的Renderer组件，使它的颜色变为我们选择的颜色。       </p>
       </section>
