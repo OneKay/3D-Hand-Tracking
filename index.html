@@ -142,8 +142,10 @@ Leap Motion与Unity集成：在<a href="https://developer.leapmotion.com/get-sta
 
 <hr>
 
-<p>Update 5:计算凸包统计手指个数
-有了之前得到的二值图后，我们可以用OpenCV的函数findContours()来计算二值图中的所有轮廓，从中取最大的轮廓作为手部轮廓。<br>
+<h1>
+<a id="update-5计算凸包统计手指个数" class="anchor" href="#update-5%E8%AE%A1%E7%AE%97%E5%87%B8%E5%8C%85%E7%BB%9F%E8%AE%A1%E6%89%8B%E6%8C%87%E4%B8%AA%E6%95%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update 5:计算凸包统计手指个数</h1>
+
+<p>有了之前得到的二值图后，我们可以用OpenCV的函数findContours()来计算二值图中的所有轮廓，从中取最大的轮廓作为手部轮廓。<br>
 利用轮廓然后使用OpenCV函数convexHull()与convexityDefects()可以计算凸包和凸缺陷，从而得到一系列凸顶点和凸缺陷（凹）顶点和凹的深度（其中包含指尖坐标）<br>
 <img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/91429732.jpg" alt="ConvexHull">
 <img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/75737218.jpg" alt="ConvexityDefects"><br>
