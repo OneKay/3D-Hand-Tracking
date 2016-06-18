@@ -136,9 +136,21 @@ Leap Motion与Unity集成：在<a href="https://developer.leapmotion.com/get-sta
     }
 }    </pre></div>
 
-<p><img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/52872741.jpg" alt="WaitForPalmCover">
+<p><img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/52872741.jpg" alt="WaitForPalmCover"><br>
 得到7个阈值后，每一帧都可以计算出7张二值化的图，将它们叠加后再进行一次中值滤波，就可以得到比较清晰的手部区域的二值图。<br>
-<img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/28041229.jpg" alt="BinaryHand"></p>
+<img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/28041229.jpg" alt="BinaryHand">    </p>
+
+<hr>
+
+<p>Update 5:计算凸包统计手指个数
+有了之前得到的二值图后，我们可以用OpenCV的函数findContours()来计算二值图中的所有轮廓，从中取最大的轮廓作为手部轮廓。<br>
+利用轮廓然后使用OpenCV函数convexHull()与convexityDefects()可以计算凸包和凸缺陷，从而得到一系列凸顶点和凸缺陷（凹）顶点和凹的深度（其中包含指尖坐标）<br>
+<img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/91429732.jpg" alt="ConvexHull">
+<img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/75737218.jpg" alt="ConvexityDefects"><br>
+凸包与手掌之间的部分为凸缺陷，每个凸缺陷区域有四个特征量：起始点（startPoint），结束点(endPoint)，距离凸包最远点(farPoint)，最远点到凸包的距离(depth)。一只手有很多凸缺陷，需要一定的策略判断哪些是手指缝那些是干扰，可利用凹的深度和凸点和凹点的夹角（[0,80））进行阈值判断，夹角利用三点的向量积求得，然后我们就可以统计处手指的个数。<br>
+整个实验的流程图：<br>
+<img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/52813213.jpg" alt="OverView"><br>
+演示视频：    </p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/OneKay">OneKay</a></p>
