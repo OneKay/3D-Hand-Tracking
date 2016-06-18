@@ -42,18 +42,12 @@
         <h1>
 <a id="update-1create-a-webpage" class="anchor" href="#update-1create-a-webpage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update 1:create a webpage</h1>
 
-<h4>
-<a id="2016516" class="anchor" href="#2016516" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2016.5.16</h4>
-
 <p>This week, we create a webpage and choose the first project in the list: finger tracking as our future work.</p>
 
 <hr>
 
 <h1>
 <a id="update-2确定项目方案与环境搭建" class="anchor" href="#update-2%E7%A1%AE%E5%AE%9A%E9%A1%B9%E7%9B%AE%E6%96%B9%E6%A1%88%E4%B8%8E%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update 2:确定项目方案与环境搭建</h1>
-
-<h4>
-<a id="2016526" class="anchor" href="#2016526" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2016.5.26</h4>
 
 <p>利用finger tracking 技术可以实现手势的捕抓，以及3D模型的重建，但另一方面，出于实用性和趣味性的考虑，我们希望能够实现和环境的交互，改变或者是调整环境中的东西，比如环境中有一个魔方，希望能够实现魔方的旋转；更进一步，我们希望可以实现和3D场景的交互，比如说捡起环境中的魔方，或者是将魔方移到别的位置。<br>
 因此，我们使用Leap Motion来实现这一功能。Leap Motion能够感知移动的双手，以一种新的方式与电脑交互，它以1%毫米的精度追踪你的10根手指，150°超宽幅的空间视场，用户可以像在真实世界一样随意在3D的空间移动双手。<br>
@@ -64,9 +58,6 @@ Leap Motion与Unity集成：在<a href="https://developer.leapmotion.com/get-sta
 
 <h1>
 <a id="update-3实现碰撞检测与旋转" class="anchor" href="#update-3%E5%AE%9E%E7%8E%B0%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B%E4%B8%8E%E6%97%8B%E8%BD%AC" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update 3:实现碰撞检测与旋转</h1>
-
-<h4>
-<a id="201662" class="anchor" href="#201662" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2016.6.2</h4>
 
 <p>本周我们做了一个实验来实现物体的碰撞检测与旋转，以及简单的leapmotion交互。
 在Core Assets中最核心的资源就是HandController,这个是允许我们和Leap Motion设备交互的主要预制体，它作为锚点将双手渲染到场景中。<br>
@@ -112,8 +103,42 @@ Leap Motion与Unity集成：在<a href="https://developer.leapmotion.com/get-sta
 <p>逻辑的核心在OnTriggerEnter(Collider c) 函数内，我们检查与可选择物体的碰撞对象是不是食指，如果是，我们设置为该颜色。我们设计这么一种交互，当食指与可选择颜色的立方体产生碰撞的后，让它旋转33度，这样我们能更直观的看出交互效果。 然后获得立方体的Renderer组件，使它的颜色变为我们选择的颜色。    </p>
 
 <p>演示视频：           </p>
-<iframe height=498 width=510 src="http://player.youku.com/embed/XMTU5NDQxMzA3Mg==" frameborder=0 allowfullscreen></iframe>
 
+<hr>
+
+<h1>
+<a id="update-4获取手部位置与轮廓" class="anchor" href="#update-4%E8%8E%B7%E5%8F%96%E6%89%8B%E9%83%A8%E4%BD%8D%E7%BD%AE%E4%B8%8E%E8%BD%AE%E5%BB%93" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Update 4:获取手部位置与轮廓</h1>
+
+<p>经过与老师讨论后，为了更符合项目要求，我们组最终决定更换实验方案，结合OpenCV来实现HandTracking<br>
+首先是OpenCV的配置，我们使用的版本是2.4.9，这部分资料网上有很多，参考资料：<a href="http://blog.csdn.net/liukun321/article/details/38373277">VS2012+OpenCV2.4.9配置</a><br>
+为了定位每一帧中手的位置，这里使用基于颜色来识别的方案。首先在开始采样阶段，在图像中给出7个ROI区域，使用者首先将自己的手覆盖这7个区域，用于程序进行颜色采样。    </p>
+
+<div class="highlight highlight-source-c++"><pre><span class="pl-k">void</span> <span class="pl-en">waitForPalmCover</span>(MyImage* m){
+    m-&gt;cap &gt;&gt; m-&gt;src;
+    <span class="pl-c1">flip</span>(m-&gt;src,m-&gt;src,<span class="pl-c1">1</span>);
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">3</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">6</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">3</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">6</span>+square_len),m-&gt;src));
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">4</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">2</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">4</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">2</span>+square_len),m-&gt;src));
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">3</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">1.5</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">3</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">1.5</span>+square_len),m-&gt;src));
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">2</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">2</span>+square_len),m-&gt;src));
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2.5</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">2.5</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2.5</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">2.5</span>+square_len),m-&gt;src));
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">1.5</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">1.5</span>+square_len),m-&gt;src));
+    roi.<span class="pl-c1">push_back</span>(<span class="pl-c1">My_ROI</span>(<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2.5</span>, m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">1.8</span>),<span class="pl-c1">Point</span>(m-&gt;src.<span class="pl-smi">cols</span>/<span class="pl-c1">2.5</span>+square_len,m-&gt;src.<span class="pl-smi">rows</span>/<span class="pl-c1">1.8</span>+square_len),m-&gt;src)); 
+    <span class="pl-k">for</span>(<span class="pl-k">int</span> i =<span class="pl-c1">0</span>;i&lt;<span class="pl-c1">50</span>;i++){
+        m-&gt;cap &gt;&gt; m-&gt;src;
+        <span class="pl-c1">flip</span>(m-&gt;src,m-&gt;src,<span class="pl-c1">1</span>);
+        <span class="pl-k">for</span>(<span class="pl-k">int</span> j=<span class="pl-c1">0</span>;j&lt;NSAMPLES;j++){
+            roi[j].<span class="pl-c1">draw_rectangle</span>(m-&gt;src);
+        }
+
+        <span class="pl-c1">imshow</span>(<span class="pl-s"><span class="pl-pds">"</span>img1<span class="pl-pds">"</span></span>, m-&gt;src);
+        out &lt;&lt; m-&gt;src;
+        <span class="pl-k">if</span>(<span class="pl-c1">cv::waitKey</span>(<span class="pl-c1">30</span>) &gt;= <span class="pl-c1">0</span>) <span class="pl-k">break</span>;
+    }
+}    </pre></div>
+
+<p><img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/52872741.jpg" alt="WaitForPalmCover">
+得到7个阈值后，每一帧都可以计算出7张二值化的图，将它们叠加后再进行一次中值滤波，就可以得到比较清晰的手部区域的二值图。<br>
+<img src="http://7xrn7f.com1.z0.glb.clouddn.com/16-6-18/28041229.jpg" alt="BinaryHand"></p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/OneKay">OneKay</a></p>
